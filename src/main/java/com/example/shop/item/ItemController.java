@@ -98,7 +98,10 @@ public class ItemController {
 
     @GetMapping("/list/page/{id}")
     String getListPage(@PathVariable Integer id, Model model){
-        Page<Item> result = itemRepository.findPageBy(PageRequest.of(id-1, 5));
+        if (id < 1) {
+            return "redirect:/list/page/1";
+        }
+        Page<Item> result = itemRepository.findPageBy(PageRequest.of(id - 1, 5));
         model.addAttribute("items", result.getContent());
         model.addAttribute("page", result);
         model.addAttribute("currentPage", id);
@@ -112,12 +115,13 @@ public class ItemController {
         return result;
     }
 
-    @PostMapping("/search")
-    String postSearch(@RequestParam String searchText, @RequestParam(defaultValue="1") int page,Model model){
-        Page<Item> result = itemRepository.fullTextSearch(searchText, PageRequest.of(page-1, 5));
+    @GetMapping("/search")
+    String search(@RequestParam String searchText, @RequestParam(defaultValue="1") int page, Model model){
+        int safePage = Math.max(page, 1);
+        Page<Item> result = itemRepository.fullTextSearch(searchText, PageRequest.of(safePage - 1, 5));
         model.addAttribute("items", result.getContent());
         model.addAttribute("page", result);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", safePage);
         model.addAttribute("searchText", searchText);
         return "list";
     }
