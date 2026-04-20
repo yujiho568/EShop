@@ -6,7 +6,7 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <link href = "/main.css" rel = "stylesheet">
+  <link href="/main.css" rel="stylesheet">
 </head>
 <body>
   <div th:replace="~{nav.html::navbar}"></div>
@@ -18,44 +18,30 @@
   <form action="/search" method="GET">
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     <input name="searchText" style="display:inline">
-    <button type="submit">검색</button>
+    <button type="submit">search</button>
   </form>
-  <div class = "card" th:each=" i:${items}">
-    <img th:src="${i.image}">
+  <div class="card" th:each="p:${products}">
+    <img th:src="${p.image}">
     <div>
-      <h4 th:text="${i.title}"></h4>
-      <a th:href="@{'/detail/' + ${i.id}}">링크</a>
-      <p th:text="${i.price}">가격</p>
-      <a th:href="@{'/edit/' + ${i.id}}">✏️</a>
-      <span th:onclick="fetch(`/item?id=[[${i.id}]]`, {method : 'DELETE'})">🗑️</span>
-
+      <h4 th:text="${p.title}"></h4>
+      <a th:href="@{'/detail/' + ${p.id}}">link</a>
+      <p th:text="${p.price}">price</p>
+      <a th:href="@{'/edit/' + ${p.id}}">edit</a>
+      <span th:onclick="fetch(`/product?id=[[${p.id}]]`, {method : 'DELETE'})">delete</span>
     </div>
   </div>
   <div class="pagination">
     <a th:if="${currentPage > 1}"
        th:href="${searchText != null} ? @{'/search?searchText=' + ${searchText} + '&page=' + ${currentPage - 1}} : @{'/list/page/' + ${currentPage - 1}}">Previous</a>
 
-    <span th:each="pageNum : ${#numbers.sequence(1, page.totalPages)}">
+    <span th:each="pageNum : ${#numbers.sequence(1, totalPages)}">
         <a th:href="${searchText != null} ? @{'/search?searchText=' + ${searchText} + '&page=' + ${pageNum}} : @{'/list/page/' + ${pageNum}}"
            th:text="${pageNum}"
            th:classappend="${pageNum == currentPage} ? 'current-page' : ''">page</a>
     </span>
 
-    <a th:if="${currentPage < page.totalPages}"
+    <a th:if="${currentPage < totalPages}"
        th:href="${searchText != null} ? @{'/search?searchText=' + ${searchText} + '&page=' + ${currentPage + 1}} : @{'/list/page/' + ${currentPage + 1}}">Next</a>
   </div>
-
-  <!--  <button class="btn">button</button>-->
-<!--<script>-->
-<!--  document.querySelectorAll('.btn')[0].addEventListener('click', function () {-->
-<!--    fetch('/test1', {-->
-<!--      method : 'POST',-->
-<!--      headers : {'Content-Type' : 'application/json'},-->
-<!--      body : JSON.stringify({name : 'kim'})-->
-<!--    })-->
-<!--  })-->
-<!--</script>-->
-
-
 </body>
 </html>
